@@ -11,6 +11,18 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/suppliers', function () {
+    return view('suppliers');
+})->middleware(['auth', 'verified'])->name('suppliers');
+
+Route::get('/layups', function () {
+    return view('layups');
+})->middleware(['auth', 'verified'])->name('layups');
+
+Route::get('/layers', function () {
+    return view('layers');
+})->middleware(['auth', 'verified'])->name('layers');
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
