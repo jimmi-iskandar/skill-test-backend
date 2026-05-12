@@ -9,7 +9,7 @@ class Supplier extends Model
     protected $fillable = ['name'];
     public function layups()
     {
-        return $this->hasMany(Layup::class);
+        return $this->hasMany(CltLayup::class);
         
     }
 }

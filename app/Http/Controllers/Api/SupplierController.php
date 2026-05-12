@@ -3,66 +3,52 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Interfaces\SupplierRepositoryInterface;
+use App\Interfaces\SupplierRepositoryInterface; // Pastikan ini di-import
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 
 class SupplierController extends Controller
 {
-    private SupplierRepositoryInterface $supplierRepository;
+    // 1. Kamu HARUS mendefinisikan variabel ini
+    private $supplierRepo;
 
-    public function __construct(SupplierRepositoryInterface $supplierRepository) 
+    // 2. Kamu HARUS memasukkannya ke Constructor (Dependency Injection)
+    public function __construct(SupplierRepositoryInterface $supplierRepo)
     {
-        // Dependency Injection
-        $this->supplierRepository = $supplierRepository;
+        $this->supplierRepo = $supplierRepo;
     }
 
     public function index()
     {
-        $suppliers = $this->supplierRepository->getAllSuppliers();
-        return response()->json(['data' => $suppliers]);
+        return response()->json($this->supplierRepo->getAllSuppliers());
     }
 
+    // 3. Pastikan fungsi store HANYA menerima Request
     public function store(Request $request)
     {
-        
-        // Validasi dasar
         $validated = $request->validate([
             'name' => 'required|string|max:255'
         ]);
 
-        $supplier = $this->supplierRepository->createSupplier($validated);
+        // Sekarang $this->supplierRepo tidak akan "Undefined" lagi
+        $supplier = $this->supplierRepo->createSupplier($validated);
 
-        return response()->json(['data' => $supplier], Response::HTTP_CREATED);
-        //menampilkan isi 
-        return response()->json($request->all());
+        return response()->json($supplier, 201);
     }
 
     public function show($id)
     {
-        $supplier = $this->supplierRepository->getSupplierById($id);
-        return response()->json(['data' => $supplier]);
+        return response()->json($this->supplierRepo->getSupplierById($id));
     }
 
     public function update(Request $request, $id)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255'
-        ]);
-
-        $this->supplierRepository->updateSupplier($id, $validated);
-        $updatedSupplier = $this->supplierRepository->getSupplierById($id);
-
-        return response()->json(['data' => $updatedSupplier]);
+        $validated = $request->validate(['name' => 'required|string']);
+        return response()->json($this->supplierRepo->updateSupplier($id, $validated));
     }
-    
 
     public function destroy($id)
     {
-        $this->supplierRepository->deleteSupplier($id);
-        return response()->json([
-        'message' => 'Supplier deleted successfully!'
-    ], 200);
-        return response()->json(null, Response::HTTP_NO_CONTENT);
+        $this->supplierRepo->deleteSupplier($id);
+        return response()->json(['message' => 'Supplier deleted']);
     }
 }
