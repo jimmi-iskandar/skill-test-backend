@@ -37,6 +37,21 @@ class CltLayerController extends Controller {
         $layer = $this->layerRepo->createLayer($validated);
         return response()->json($layer, 201);
     }
+    // PUT /api/suppliers/{supplierId}/layups/{layupId}/layers/{id}
+    public function update(Request $request, $supplierId, $layupId, $id){
+        \App\Models\CltLayup::where('id', $layupId)->where('supplier_id', $supplierId)->firstOrFail();
+
+        $validated = $request->validate([
+            'layer_order' => 'required|integer',
+            'thickness'   => 'required|numeric',
+            'width'       => 'required|numeric',
+            'angle'       => 'required|numeric',
+        ]);
+
+        $validated['layup_id'] = $layupId;
+        $layer = $this->layerRepo->updateLayer($id, $validated);
+        return response()->json($layer);
+    }
 
     // DELETE /api/suppliers/{supplierId}/layups/{layupId}/layers/{id}
     public function destroy($supplierId, $layupId, $id) {

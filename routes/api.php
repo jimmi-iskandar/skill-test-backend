@@ -27,3 +27,8 @@ Route::prefix('suppliers/{supplier}')->group(function () {
                 Route::delete('layers/{id}', [CltLayerController::class, 'destroy']);
             });
 });
+
+
+Route::get('suppliers/{id}/export', [SupplierController::class, 'export']);
+
+Route::post('suppliers/{id}/import', [SupplierController::class, 'import']);
